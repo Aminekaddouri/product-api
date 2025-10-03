@@ -2,6 +2,7 @@ import Product from "../models/productModel.js";
 
 const getAllProducts = async (req, res) => {
   try {
+    // Filtering
     const queryObj = { ...req.query };
     const excludedFiels = ["page", "sort", "limit", "fields"];
     excludedFiels.forEach((el) => delete queryObj[el]);
@@ -9,7 +10,15 @@ const getAllProducts = async (req, res) => {
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
-    const query = Product.find(JSON.parse(queryStr));
+    let query = Product.find(JSON.parse(queryStr));
+
+    // Sorting
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      query = query.sort(sortBy);
+    } else {
+      query = query.sort("-createdAt");
+    }
 
     const products = await query;
 
