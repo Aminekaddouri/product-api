@@ -38,7 +38,7 @@ const productSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now(),
-    select: true,
+    select: false, // exclude fields from schema very useful when we have sensetive data like passwords
   },
 });
 
