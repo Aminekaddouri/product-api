@@ -1,8 +1,10 @@
 import express from "express";
+import qs from "qs";
 import morgan from "morgan";
 import tourRouter from "./routes/productRoutes.js";
 
 const app = express();
+app.set('query parser', 'extended');
 
 // MIDDLEWARES
 if (process.env.NODE_ENV === "development") {

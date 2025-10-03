@@ -6,7 +6,10 @@ const getAllProducts = async (req, res) => {
     const excludedFiels = ["page", "sort", "limit", "fields"];
     excludedFiels.forEach((el) => delete queryObj[el]);
 
-    const query = Product.find(queryObj);
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+
+    const query = Product.find(JSON.parse(queryStr));
 
     const products = await query;
 
@@ -70,14 +73,10 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
-    const product = await Product.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!product) {
       return res.status(404).json({
